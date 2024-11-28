@@ -1,2 +1,2 @@
 # ProceduralGeneration
- procedural terrain generation
+ Basic procedural terrain generation Using Noise

@@ -287,7 +287,7 @@ MonoBehaviour:
   islandMinValleyDepth: 0.2
   islandMaxValleyDepth: 0.9
   islandMinMountainRoughness: 0.2
-  islandMaxMountainRoughness: 0.5
+  islandMaxMountainRoughness: 0.7
   islandMinBeachHeight: 0.1
   islandMaxBeachHeight: 0.5
   islandMinSeaRatio: 0.2
@@ -305,7 +305,7 @@ MonoBehaviour:
     type: 2}
   waterLayer: {fileID: 8574412962073106934, guid: bc1dee72d60383f4f93f8be528addde8,
     type: 2}
-  generationRepeats: 2
+  generationRepeats: 5
   generationInterval: 5
   textTimer: {fileID: 1775912905}
 --- !u!154 &1206331751

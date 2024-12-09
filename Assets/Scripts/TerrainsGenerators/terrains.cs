@@ -162,9 +162,9 @@ public class terrains : MonoBehaviour
         float[,] heights = new float[width, length];
 
         // Parameters for layered Perlin noise
-        int layers = 4;
-        float persistence = 0.6f;
-        float lacunarity = 2.2f;
+        int layers = 6;
+        float persistence = 0.8f;
+        float lacunarity = 3.6f;
 
         for (int x = 0; x < width; x++)
         {
@@ -184,9 +184,9 @@ public class terrains : MonoBehaviour
         float[,] heights = new float[width, length];
 
         // Parameters for layered Perlin noise
-        int layers = 5;               // Number of noise layers
-        float persistence = 0.5f;     // Controls amplitude reduction
-        float lacunarity = 2.0f;      // Controls frequency increase
+        int layers = 8;               // Number of noise layers
+        float persistence = 0.75f;     // Controls amplitude reduction
+        float lacunarity = 3.5f;      // Controls frequency increase
 
         for (int x = 0; x < width; x++)
         {

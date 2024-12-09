@@ -274,13 +274,26 @@ MonoBehaviour:
   terrainType: 3
   width: 1024
   length: 1024
-  height: 150
+  height: 250
   scale: 75
-  valleyDepth: 0.7
-  mountainRoughness: 0.8
+  randomnessFactor: 0.5
+  valleyDepth: 0.65
+  mountainRoughness: 0.3
   beachHeight: 0.4
   seaRatio: 0.9
   seaLevel: -0.2
+  islandMinHeight: 75
+  islandMaxHeight: 250
+  islandMinValleyDepth: 0.2
+  islandMaxValleyDepth: 0.9
+  islandMinMountainRoughness: 0.2
+  islandMaxMountainRoughness: 0.5
+  islandMinBeachHeight: 0.1
+  islandMaxBeachHeight: 0.5
+  islandMinSeaRatio: 0.2
+  islandMaxSeaRatio: 0.7
+  islandMinRandomnessFactor: 0.35
+  islandMaxRandomnessFactor: 0.9
   sandHeight: 0.05
   grassHeight: 0.3
   rockHeight: 0.6
@@ -292,8 +305,9 @@ MonoBehaviour:
     type: 2}
   waterLayer: {fileID: 8574412962073106934, guid: bc1dee72d60383f4f93f8be528addde8,
     type: 2}
-  times: 5
-  texttimer: {fileID: 1775912905}
+  generationRepeats: 2
+  generationInterval: 5
+  textTimer: {fileID: 1775912905}
 --- !u!154 &1206331751
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -1351,7 +1365,7 @@ GameObject:
   - component: {fileID: 1775912906}
   - component: {fileID: 1775912905}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TimerTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1630,6 +1644,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 1743546978}
+  rotationSpeed: 5
+  enableSmoothRotation: 1
 --- !u!114 &1828855657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1683,7 +1699,7 @@ MonoBehaviour:
   multithreaded: 0
   buildOnAwake: 1
   buildOnEnable: 0
-  applyDirectionRotation: 1
+  applyDirectionRotation: 0
   useTriggers: 0
   triggerGroup: 0
   _direction: 1

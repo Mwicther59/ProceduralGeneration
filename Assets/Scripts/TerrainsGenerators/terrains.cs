@@ -11,40 +11,60 @@ public class terrains : MonoBehaviour
     public TerrainType terrainType;
 
     [Header("Terrain Dimensions")]
-    public int width = 512;
-    public int length = 512;
-    public int height = 50;
+    [SerializeField] private int width = 512;
+    [SerializeField] private int length = 512;
+    [SerializeField] private int height = 50;
 
     [Header("General Noise Settings")]
-    public float scale = 50f;
+    [SerializeField] private float scale = 50f;
 
     [Header("Randomness Control")]
-    private float randomnessFactor = 0.5f; // Controls the degree of randomness (0 = no randomness, 1 = full randomness)
+    [SerializeField] private float randomnessFactor = 0.5f; // Controls the degree of randomness (0 = no randomness, 1 = full randomness)
 
     [Header("Feature-Specific Parameters")]
-    public float valleyDepth = 0.5f;
-    public float mountainRoughness = 0.8f;
-    public float beachHeight = 0.15f;
-    public float seaRatio = 0.3f;
-    public float seaLevel = -0.2f;
+    [SerializeField] private float valleyDepth = 0.5f;
+    [SerializeField] private float mountainRoughness = 0.8f;
+    [SerializeField] private float beachHeight = 0.15f;
+    [SerializeField] private float seaRatio = 0.3f;
+    [SerializeField] private float seaLevel = -0.2f;
+
+    [Header("Island Parameters")]
+    [SerializeField] private int islandMinHeight = 75;
+    [SerializeField] private int islandMaxHeight = 250;
+    [SerializeField] private float islandMinValleyDepth = 0.2f;
+    [SerializeField] private float islandMaxValleyDepth = 1f;
+    [SerializeField] private float islandMinMountainRoughness = 0.5f;
+    [SerializeField] private float islandMaxMountainRoughness = 1f;
+    [SerializeField] private float islandMinBeachHeight = 0.1f;
+    [SerializeField] private float islandMaxBeachHeight = 0.5f;
+    [SerializeField] private float islandMinSeaRatio = 0.2f;
+    [SerializeField] private float islandMaxSeaRatio = 0.7f;
+    [SerializeField] private float islandMinRandomnessFactor = 0.1f;
+    [SerializeField] private float islandMaxRandomnessFactor = 0.9f;
 
     [Header("Painting Settings")]
-    public float sandHeight = -0.1f;
-    public float grassHeight = 0.3f;
-    public float rockHeight = 0.6f;
+    [SerializeField] private float sandHeight = -0.1f;
+    [SerializeField] private float grassHeight = 0.3f;
+    [SerializeField] private float rockHeight = 0.6f;
 
-    public TerrainLayer sandLayer;
-    public TerrainLayer grassLayer;
-    public TerrainLayer rockLayer;
-    public TerrainLayer waterLayer;
+    [Header("Terrain Layers")]
+    [SerializeField] private TerrainLayer sandLayer;
+    [SerializeField] private TerrainLayer grassLayer;
+    [SerializeField] private TerrainLayer rockLayer;
+    [SerializeField] private TerrainLayer waterLayer;
+
+    [Header("Generation Settings")]
+    [SerializeField] private int generationRepeats = 2;
+    [SerializeField] private float generationInterval = 5f;
+
+    [Header("UI Elements")]
+    [SerializeField] private TextMeshProUGUI textTimer;
     private Terrain terrain;
-    [SerializeField] private int times = 2;
-    [SerializeField] private TextMeshProUGUI texttimer;
     void Awake()
     {
         terrain = GetComponent<Terrain>();
         GenerateTerrain();
-        StartCoroutine(GenerateFast(times));
+        StartCoroutine(GenerateFast(generationRepeats));
     }
     private IEnumerator GenerateFast(int times)
     {
@@ -56,23 +76,22 @@ public class terrains : MonoBehaviour
             float countdown = 5f;
             while (countdown > 0)
             {
-                texttimer.text = $"Next generation in: {countdown:F1} seconds";
+                textTimer.text = $"Next generation in: {countdown:F1} seconds";
                 countdown -= Time.deltaTime;
                 yield return null; // Wait for the next frame
             }
 
-            texttimer.text = "Generating..."; // Optional: Indicate when terrain is being generated
+            textTimer.text = "Generating..."; // Optional: Indicate when terrain is being generated
             yield return new WaitForSeconds(0.5f); // Small pause to display "Generating..." message
         }
 
-        texttimer.text = "Done!"; // Optional: Indicate completion
+        textTimer.text = "Done!"; // Optional: Indicate completion
     }
     public void GenerateTerrain()
     {
         float[,] heights;
 
-        // Randomize parameters based on randomnessFactor
-        float noiseScaleVariation = Random.Range(0.8f, 1.5f) * randomnessFactor + (1 - randomnessFactor); // More random when factor is high
+        float noiseScaleVariation = Random.Range(0.8f, 1.5f) * randomnessFactor + (1 - randomnessFactor);
         float valleyDepthVariation = Random.Range(0.3f, 0.7f) * randomnessFactor + (1 - randomnessFactor);
         float mountainRoughnessVariation = Random.Range(0.5f, 1.5f) * randomnessFactor + (1 - randomnessFactor);
 
@@ -89,14 +108,14 @@ public class terrains : MonoBehaviour
                 heights = BlendFeaturesWithBeaches(noiseScaleVariation, valleyDepthVariation);
                 break;
             case TerrainType.Island:
-                height = Random.Range(75, 250);
-                valleyDepth = Random.Range(0.2f, 1f);
-                mountainRoughness = Random.Range(0.5f, 1f);
-                beachHeight = Random.Range(0.1f, 0.5f);
-                seaRatio = Random.Range(0.2f, 0.7f);
-                randomnessFactor = Random.Range(0.1f, 0.9f);
-                float newNoiseScaleVariation = Random.Range(0.8f, 1.5f) * randomnessFactor + (1 - randomnessFactor); // More random when factor is high
-                heights = GenerateIsland(newNoiseScaleVariation, 0.1f);
+                height = Random.Range(islandMinHeight, islandMaxHeight);
+                valleyDepth = Random.Range(islandMinValleyDepth, islandMaxValleyDepth);
+                mountainRoughness = Random.Range(islandMinMountainRoughness, islandMaxMountainRoughness);
+                beachHeight = Random.Range(islandMinBeachHeight, islandMaxBeachHeight);
+                seaRatio = Random.Range(islandMinSeaRatio, islandMaxSeaRatio);
+                randomnessFactor = Random.Range(islandMinRandomnessFactor, islandMaxRandomnessFactor);
+                float islandNoiseScale = Random.Range(0.8f, 1.5f) * randomnessFactor + (1 - randomnessFactor);
+                heights = GenerateIsland(islandNoiseScale, 0.1f);
                 PaintTerrainTextures(heights);
                 break;
             default:
@@ -105,39 +124,82 @@ public class terrains : MonoBehaviour
         }
 
         ApplyHeightsToTerrain(heights);
-        PaintTerrainTextures(heights); // Repaint textures after heights are applied
+        PaintTerrainTextures(heights);
     }
 
+    //float[,] GenerateValleys(float valleyVariation)
+    //{
+    //    float[,] heights = new float[width, length];
+    //    for (int x = 0; x < width; x++)
+    //    {
+    //        for (int y = 0; y < length; y++)
+    //        {
+    //            float gradient = Mathf.Abs((float)x / width - 0.5f);
+    //            float noise = Mathf.PerlinNoise(x / (scale * valleyVariation), y / (scale * valleyVariation)); // Apply randomness to noise scale
+    //            heights[x, y] = noise * (1 - gradient * valleyDepth);
+    //        }
+    //    }
+    //    return heights;
+    //}
+
+    //float[,] GenerateMountains(float noiseVariation, float roughness)
+    //{
+    //    float[,] heights = new float[width, length];
+    //    for (int x = 0; x < width; x++)
+    //    {
+    //        for (int y = 0; y < length; y++)
+    //        {
+    //            float baseNoise = Mathf.PerlinNoise(x / (scale * noiseVariation), y / (scale * noiseVariation));
+    //            float detailNoise = Mathf.PerlinNoise(x / (scale * 0.5f), y / (scale * 0.5f)) * 0.5f;
+    //            float combinedNoise = Mathf.Pow(baseNoise + detailNoise, roughness); // Apply randomness to mountain roughness
+    //            heights[x, y] = combinedNoise;
+    //        }
+    //    }
+    //    return heights;
+    //}
     float[,] GenerateValleys(float valleyVariation)
     {
         float[,] heights = new float[width, length];
+
+        // Parameters for layered Perlin noise
+        int layers = 4;
+        float persistence = 0.6f;
+        float lacunarity = 2.2f;
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < length; y++)
             {
                 float gradient = Mathf.Abs((float)x / width - 0.5f);
-                float noise = Mathf.PerlinNoise(x / (scale * valleyVariation), y / (scale * valleyVariation)); // Apply randomness to noise scale
-                heights[x, y] = noise * (1 - gradient * valleyDepth);
+                float layeredNoise = GenerateLayeredPerlinNoise(x, y, layers, scale * valleyVariation, persistence, lacunarity);
+                heights[x, y] = layeredNoise * (1 - gradient * valleyDepth); // Combine noise with gradient
             }
         }
+
         return heights;
     }
 
     float[,] GenerateMountains(float noiseVariation, float roughness)
     {
         float[,] heights = new float[width, length];
+
+        // Parameters for layered Perlin noise
+        int layers = 5;               // Number of noise layers
+        float persistence = 0.5f;     // Controls amplitude reduction
+        float lacunarity = 2.0f;      // Controls frequency increase
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < length; y++)
             {
-                float baseNoise = Mathf.PerlinNoise(x / (scale * noiseVariation), y / (scale * noiseVariation));
-                float detailNoise = Mathf.PerlinNoise(x / (scale * 0.5f), y / (scale * 0.5f)) * 0.5f;
-                float combinedNoise = Mathf.Pow(baseNoise + detailNoise, roughness); // Apply randomness to mountain roughness
-                heights[x, y] = combinedNoise;
+                float layeredNoise = GenerateLayeredPerlinNoise(x, y, layers, scale * noiseVariation, persistence, lacunarity);
+                heights[x, y] = Mathf.Pow(layeredNoise, roughness); // Apply roughness for sharper peaks
             }
         }
+
         return heights;
     }
+
 
     float[,] GenerateBeaches(float[,] baseHeights)
     {
@@ -178,45 +240,101 @@ public class terrains : MonoBehaviour
         return blendedHeights;
     }
 
+    //float[,] GenerateIsland(float variation, float mountainPercentage)
+    //{
+    //    // Generate the base terrain heights
+    //    float[,] valleyHeights = GenerateValleys(variation);
+    //    float[,] mountainHeights = GenerateMountains(variation, mountainRoughness);
+    //    float[,] islandHeights = new float[width, length];
+
+    //    // Randomize the peak position within the island
+    //    Vector2 peakPosition = new Vector2(UnityEngine.Random.Range(0f, width), UnityEngine.Random.Range(0f, length));
+
+    //    // Blend the heights for the island based on the randomized peak position
+    //    for (int x = 0; x < width; x++)
+    //    {
+    //        for (int y = 0; y < length; y++)
+    //        {
+    //            // Blend the base valley and mountain heights based on mountainPercentage
+    //            // The higher the mountainPercentage, the more influence the mountainHeights have
+    //            float blendFactor = Mathf.Lerp(0f, 1f, mountainPercentage); // Controls the blend from valley to mountain
+    //            islandHeights[x, y] = Mathf.Lerp(valleyHeights[x, y], mountainHeights[x, y], blendFactor);
+
+    //            // Calculate the distance to the randomized peak position
+    //            float distanceToPeak = Vector2.Distance(new Vector2(x, y), peakPosition) / Mathf.Max(width, length);
+
+    //            // Adjust the height based on the distance to the peak
+    //            // Closer to the peak, the height increases, farther away, it decreases
+    //            float peakHeightModifier = Mathf.Exp(-distanceToPeak * 5f); // Exponential fall-off for the peak height
+    //            islandHeights[x, y] += peakHeightModifier * (1 - distanceToPeak) * 0.5f; // Apply modifier to height
+
+    //            // If within the sea ratio, transition to the sea level
+    //            float distanceToEdge = Mathf.Min(x / (float)width, (float)(width - x) / width, y / (float)length, (float)(length - y) / length);
+    //            if (distanceToEdge < seaRatio)
+    //            {
+    //                islandHeights[x, y] = Mathf.Lerp(islandHeights[x, y], seaLevel, (1 - distanceToEdge / seaRatio));
+    //            }
+    //        }
+    //    }
+
+    //    return islandHeights;
+    //}
     float[,] GenerateIsland(float variation, float mountainPercentage)
     {
-        // Generate the base terrain heights
-        float[,] valleyHeights = GenerateValleys(variation);
-        float[,] mountainHeights = GenerateMountains(variation, mountainRoughness);
-        float[,] islandHeights = new float[width, length];
+        float[,] heights = new float[width, length];
 
-        // Randomize the peak position within the island
+        int layers = 5; // Shared layers for both valleys and mountains
+        float persistence = 0.5f;
+        float lacunarity = 2.0f;
+
         Vector2 peakPosition = new Vector2(UnityEngine.Random.Range(0f, width), UnityEngine.Random.Range(0f, length));
 
-        // Blend the heights for the island based on the randomized peak position
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < length; y++)
             {
-                // Blend the base valley and mountain heights based on mountainPercentage
-                // The higher the mountainPercentage, the more influence the mountainHeights have
-                float blendFactor = Mathf.Lerp(0f, 1f, mountainPercentage); // Controls the blend from valley to mountain
-                islandHeights[x, y] = Mathf.Lerp(valleyHeights[x, y], mountainHeights[x, y], blendFactor);
+                float valleyNoise = GenerateLayeredPerlinNoise(x, y, layers, scale * variation, persistence, lacunarity);
+                float mountainNoise = GenerateLayeredPerlinNoise(x, y, layers, scale * variation, persistence, lacunarity);
 
-                // Calculate the distance to the randomized peak position
+                // Blend based on mountainPercentage
+                float blendedNoise = Mathf.Lerp(valleyNoise, mountainNoise, mountainPercentage);
+
+                // Modify heights based on proximity to the peak
                 float distanceToPeak = Vector2.Distance(new Vector2(x, y), peakPosition) / Mathf.Max(width, length);
+                float peakModifier = Mathf.Exp(-distanceToPeak * 5f);
+                heights[x, y] = blendedNoise + peakModifier * (1 - distanceToPeak) * 0.5f;
 
-                // Adjust the height based on the distance to the peak
-                // Closer to the peak, the height increases, farther away, it decreases
-                float peakHeightModifier = Mathf.Exp(-distanceToPeak * 5f); // Exponential fall-off for the peak height
-                islandHeights[x, y] += peakHeightModifier * (1 - distanceToPeak) * 0.5f; // Apply modifier to height
-
-                // If within the sea ratio, transition to the sea level
+                // Transition to sea level if near edges
                 float distanceToEdge = Mathf.Min(x / (float)width, (float)(width - x) / width, y / (float)length, (float)(length - y) / length);
                 if (distanceToEdge < seaRatio)
                 {
-                    islandHeights[x, y] = Mathf.Lerp(islandHeights[x, y], seaLevel, (1 - distanceToEdge / seaRatio));
+                    heights[x, y] = Mathf.Lerp(heights[x, y], seaLevel, (1 - distanceToEdge / seaRatio));
                 }
             }
         }
 
-        return islandHeights;
+        return heights;
     }
+    float GenerateLayeredPerlinNoise(float x, float y, int layers, float baseScale, float persistence, float lacunarity)
+    {
+        float noiseValue = 0f;
+        float amplitude = 1f; // Initial amplitude
+        float frequency = 1f; // Initial frequency (inverse of scale)
+        float maxAmplitude = 0f; // Used for normalization
+
+        for (int i = 0; i < layers; i++)
+        {
+            float perlin = Mathf.PerlinNoise(x / (baseScale / frequency), y / (baseScale / frequency));
+            noiseValue += perlin * amplitude;
+
+            maxAmplitude += amplitude;
+            amplitude *= persistence; // Reduce amplitude for the next layer
+            frequency *= lacunarity;  // Increase frequency for the next layer
+        }
+
+        return noiseValue / maxAmplitude; // Normalize to range [0, 1]
+    }
+
 
 
     void PaintTerrainTextures(float[,] heights)

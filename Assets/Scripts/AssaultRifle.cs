@@ -22,7 +22,7 @@ public class AssaultRifle : MonoBehaviour
     public FireMode fireMode = FireMode.Single;
 
     private float nextFireTime = 0f;        // Tracks when the gun can fire next
-
+    
     void Update()
     {
         // Toggle between single and auto fire modes

@@ -2068,7 +2068,7 @@ GameObject:
   - component: {fileID: 2010913768}
   - component: {fileID: 2010913767}
   m_Layer: 0
-  m_Name: Terrain_Static_2
+  m_Name: Terrain_Static_2_Beaches
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2086,7 +2086,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56b09164517814d45b1b895e3ecd0c18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainType: 1
+  terrainType: 2
   width: 1024
   length: 1024
   height: 300
